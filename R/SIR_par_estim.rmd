@@ -1,0 +1,80 @@
+---
+title: "Parameter estimation"
+output: html_document
+---
+
+Once we know how to solve an ODE with known parameters, the next step is to infer the model directly from the data.
+
+### Setting up
+
+Let's load the necessary libraries:
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(knitr)
+library(deSolve)
+library(bbmle)
+```
+
+For this exercise we will use data from a flu epidemic in an English boys schoolboard (763 boys in total) from January 22nd, 1978 (day 0) to February 4th, 1978 (day 13).
+
+The first step is create a function to perform the ODE solving.
+
+```{r}
+sir_fun <- function(beta, gamma, S0, I0 = 1 - S0, R0 = 0, times) {
+  
+# the differential equations:
+  sir_equations <- function(time, variables, parameters) {
+  with(as.list(c(variables, parameters)), {
+    dS <- -beta * I * S
+    dI <-  beta * I * S - gamma * I
+    dR <-  gamma * I
+    return(list(c(dS, dI, dR)))
+  })
+  }
+  
+# the parameters values:
+  parameters_values <- c(beta  = beta, gamma = gamma)
+
+# the initial values of variables:
+  initial_values <- c(S = S0, I = I0, R = R0)
+  
+# solving
+  out <- ode(initial_values, times, sir_equations, parameters_values)
+
+# returning the output:
+  as.data.frame(out)
+}
+```
+
+and the usual plotter
+
+```{r}
+plot_sir <- function(SIR) {
+	SIR %>% tidyr::pivot_longer(-time, names_to = 'Comp', values_to = 'Value') %>%
+    ggplot(aes(time, Value, color = Comp)) +
+    geom_line() +
+    theme_minimal() +
+    labs(x = "Time", y = "Population fraction")
+}
+```
+
+
+### Data simulation
+
+To simulate the data we generate an epidemic with known parameters and then remove data points at random.
+
+```{r}
+sir_data <- sir_fun(0.5, .25, S0 = .999, times = seq(0, 100)) %>%
+    select(day = time, cases = I) %>%
+filter(sample(c(T,F), n(), replace = T, prob = c(.75, .25)))
+```
+
+Let's see how does it look
+
+```{r}
+ggplot(sir_data, aes(time, I)) + geom_point() + theme_minimal()
+```
+
+

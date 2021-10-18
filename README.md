@@ -1,2 +1,2 @@
-# infectious-disease-modeling
-Introduction to infectious disease modeling.
+# inf-dis-modeling.github.com
+Slides and material on mathematical modelling of infectious diseases.
