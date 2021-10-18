@@ -3,7 +3,6 @@ title: "Introduction to<br>Infectious<br>Disease Modeling"
 output:
   xaringan::moon_reader:
     css: ["default", "ninjutsu", "style.css"]
-    self_contained: true
     seal: false
     nature:
       countIncrementalSlides: false
