@@ -4,6 +4,7 @@ output:
   xaringan::moon_reader:
     css: ["default", "ninjutsu", "style.css"]
     seal: false
+    self_contained: false
     nature:
       countIncrementalSlides: false
       ratio: 16:9
@@ -338,8 +339,8 @@ According to time definition:
 duration.
 
 According to the transmission mechanics:
-- **Deterministic**: no random effects, paramters are fixed and equal for everyone
-in the population. Given the same starting conditions, the epidemic trajectory is fixed.
+- **Deterministic**: no random effects, parameters are fixed and equal for everyone
+in a compartment. Given the same starting conditions, the epidemic trajectory is fixed.
 - **Stochastic**: there is random variation at the individual level and/or at parameter level. Infectious event are discrete and random 
 
 ]
@@ -361,7 +362,7 @@ The SIR models is a system of differential equations that defines the change in 
 
 --
 
-The progression from $S$ to $I$ depends on: prevalence of infected, the underlying population contact structure, and the probability of transmission given contact. These factors are described by the parameter $\beta$: the rate of a **successful infectious contact**.
+The progression from $S$ to $I$ depends on: prevalence of infected, prevalence of susceptibles, the underlying population contact structure, and the probability of transmission given contact. These factors are described by the parameter $\beta$: the rate of a **successful infectious contact**.
 
 --
 
@@ -417,7 +418,7 @@ To simplify calculation we assume a fixed population of size $N$, and $S,I,R$ as
 
 --
 
-$\beta SI$: The **rate of infection** of individuals at risk. It depends from how many risk contact an average person has $(\beta)$, adjusted by the ratio of infectious individuals among these contacts $(I)$, and by the rate of susceptible individuals $(S)$ still available.
+$\beta SI$: The **rate of new infections** among individuals at risk. It depends from how many risk contact an average person has $(\beta)$, adjusted by the ratio of infectious individuals among these contacts $(I)$, and by the rate of susceptible individuals $(S)$ still available.
 
 --
 
@@ -549,7 +550,7 @@ $$\mathcal{R}_t= \frac{\lambda S}{\gamma I} = \frac{\beta SI}{\gamma I} = \frac{
 
 --
 
-If this number is above 1 the number of cases increases faster than they recover and we observe an exponential growth. $\mathcal{R}_t$ in these situations:
+If this number is above 1 the number of cases increases faster than they recover and we observe an exponential growth. $\mathcal{R}_t$ decreases in these situations:
 
 - the **force of infection was decreased** (e.g. by public health interventions or change in behavior)
 - the **fraction of susceptibles has decreased** (natural immunity or vaccination)
@@ -607,9 +608,9 @@ The epidemic stops if the fraction of susceptible is lower than $\frac{1}{\mathc
 .pull-left[
 The epidemic threshold helps dictating public health targets.
 
-.blockquote[To stop the epidemic a population must reach a **level of immunity** equal to:
+.blockquote[To stop the epidemic a population must reach a **level of immunity** such that:
 
-$$1 - \frac{1}{\mathcal{R}_0}$$
+$$R \ge 1 - \frac{1}{\mathcal{R}_0}$$
 ]
 
 This can happen either by **natural immunity** or by **vaccination**, assuming no reinfection and sterilizing vaccines.
@@ -618,7 +619,7 @@ This can happen either by **natural immunity** or by **vaccination**, assuming n
 .pull-right[
 ```{r Rzero, echo = FALSE}
 R_zero <- tibble(
-    P = c("Measles", 'Chickenpox', 'Mumps', 'Rubella', 'COVID-19 (Delta)', 'Polio', 'Pertussis', 'Smallpox', 'COVID-19 (Alpha)', 'HIV', 'COVID (initial)', 'SARS', 'Diphtheria', 'Common cold', 'Ebola', 'Flu (pandemic)', 'Flu (seasona)', 'MERS'),
+    P = c("Measles", 'Chickenpox', 'Mumps', 'Rubella', 'COVID-19 (Delta)', 'Polio', 'Pertussis', 'Smallpox', 'COVID-19 (Alpha)', 'HIV', 'COVID (initial)', 'SARS', 'Diphtheria', 'Common cold', 'Ebola', 'Flu (pandemic)', 'Flu (seasonal)', 'MERS'),
     start = c(12, 10, 10, 6, 5, 5, 5.5, 3.5, 4, 2, 2.4, 2, 1.7, 2, 1.4, 1.3, 1.2, 0.3),
     stop = c(18, 12, 12, 7, 8, 7, 5.5, 6, 5, 5, 3.4, 4, 4.3, 3, 1.8, 2, 1.4, 0.8),
     startIm = 1 - 1/start,
@@ -696,14 +697,14 @@ $$\mathcal{R}_0 = \frac{\beta}{\gamma + \mu}$$
 
 
 In presence of birth and deaths, if the population is stable (i.e. $\nu = \mu$)
-the epidemic either dies off $(\mathcal{R}_0 < 1)$ or it reaches an **equilibrium state** $(\mathcal{R}_0 > 1)$, characterized by:
+the epidemic either dies off $(\mathcal{R}_0 < 1)$ or it reaches an equilibrium (** endemic state**) $(\mathcal{R}_0 > 1)$, characterized by:
 
 $$(S^*, I^*, R^*) = \Big(\frac{1}{\mathcal{R}_0},\frac{\mu}{\beta}(\mathcal{R}_0 - 1), 1 - \frac{1}{\mathcal{R}_0} - \frac{\mu}{\beta}(\mathcal{R}_0 - 1)\Big)$$
 --
 
 .pull-left[
 
-When demographics are considered end disease-related mortality is ignored, at the equilibrium $\mathcal{R}_0$ can be used to estimate the **mean age of infection**:
+When demographics are considered and disease-related mortality is ignored, at the equilibrium $\mathcal{R}_0$ can be used to estimate the **mean age of infection**:
 
 $$A \approx \frac{1}{\mu(\mathcal{R}_0 - 1)}$$
 Consequently, the age of first infection and the life expectancy $L = \frac{1}{\mu}$
@@ -809,7 +810,7 @@ Sources of heterogeneity (and what they change):
 
 ## Two-group SIS
 
-A very well studied examples were different STI risk group during the early HIV era. Let's assume a high risk group $H$ and a low risk group $L$ and no lifelong immunity (SIS model). The model becomes:
+A typical example are STI with no immunity. Let's assume a high risk group $H$ and a low risk group $L$ and no lifelong immunity (SIS model). Considering that $\frac{dS}{dt} = -\frac{dI}{dt}$ the model becomes:
 
 --
 
@@ -852,14 +853,14 @@ $$\mathcal{R}_0^H = \frac{\beta_{HH} n_H + \beta_{LH} n_L }{\gamma} = 10 × 0.2 
 $$\mathcal{R}_0^L = \frac{\beta_{HL} n_H + \beta_{LL} n_L }{\gamma} = 0.1 × 0.2 + 1 × 0.8 = 0.82$$
 --
 
-And the general $\mathcal{R}_0$? it depends from the dynamic in the **slaved phase**. Its computation requires more high level algebra to compute $I_H^s,I_L^s$, the distribution of $I$ among groups in the slaved phase. In this case we have:
+And the general $\mathcal{R}_0$? it depends from the dynamic in the **slaved phase**. Its computation requires more high level algebra to compute $I_H^s,I_L^s$, i.e., the distribution of $I$ among groups in the slaved phase. In this case we have:
 
 $$\mathcal{R}_0 = \mathcal{R}_0^H I_H^s + \mathcal{R}_0^L I_L^s = 2.0013$$
 
 --
 
 .blockquote[
-Each risk group has its $\mathcal{R}_0$ which depends on the **group relative proportions**. The general $\mathcal{R}_0$ depends on the **infection proportion between groups in the slaved phase** and lies between the group $\mathcal{R}_0$.
+Each risk group drives an $\mathcal{R}_0$ which depends on the **group relative proportions** and **infectiousness**. The general $\mathcal{R}_0$ depends on the **infection proportion between groups in the slaved phase** and lies between the group $\mathcal{R}_0$.
 ]
 
 ---
@@ -871,7 +872,7 @@ The cumulative number of cases at equilibrium is $1 - S_{(\infty)} = 1 - \frac{1
 The interpretation is:
 
 .blockquote[
-- The small high risk group drives the high $\mathcal{R}_0$ but the large high risk group keep the overall prevalence down.
+- The small high risk group drives the high $\mathcal{R}_0$ but the large high risk group keep the group prevalences down.
 - Even if the number of infected is low, the high risk group keep the epidemic active, as shown by the high $\mathcal{R}_0$.
 ]
 
