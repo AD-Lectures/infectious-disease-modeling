@@ -1,0 +1,362 @@
+---
+title: "Introduction to Infectious Disease Modeling - Compartmental Models"
+output:
+  xaringan::moon_reader:
+    css: ["default", "ninjutsu", "style.css", "cols.css"]
+    seal: false
+    self_contained: false
+    lib_dir: libs
+    nature:
+      countIncrementalSlides: false
+      ratio: 16:9
+---
+
+```{r, include=FALSE}
+plot_folder <- file.path("plots", "compartmental-models/")
+if (!dir.exists(plot_folder)) dir.create(plot_folder)
+
+knitr::opts_chunk$set(message = FALSE, dpi = 400, fig.path = "plots/")
+
+library(dplyr)
+library(ggplot2)
+```
+
+
+layout: false
+
+class: middle inverse
+
+# Compartmental Models
+
+---
+layout: true
+name: comp-models
+class: split-two
+
+.column[
+.content[
+
+![SIS model](img/SIS.png)
+![SIR model](img/SIR.png)
+![SEIR model](img/SEIR.png)
+]
+]
+
+---
+
+name: comp-models
+
+.column[
+
+### Susceptible-Infectious models
+.blockquote[First proposed by Kermack & McKendrick (1927), they are the foundation for modeling infectious diseases.]
+
+Describes an epidemic in term of the disease status (compartments) of fraction of the population,
+for example Susceptible $(S)$, Infectious $(I)$, Recovered $(R)$. 
+
+The individuals passes from between compartments according to specific rates.
+
+]
+
+???
+
+Examples for each model and other variations
+
+---
+
+count: false
+name: comp-models
+
+.column[
+
+### Susceptible-Infectious models
+.blockquote[First proposed by Kermack & McKendrick (1927), they are the foundation for modeling infectious diseases.]
+
+Describes an epidemic in term of the disease status (compartments) of fraction of the population,
+for example Susceptible $(S)$, Infectious $(I)$, Recovered $(R)$. 
+
+The individuals passes from between compartments according to specific rates.
+
+Based on the assumption of:
+- **Homogeneous Mixing**: Everyone is potentially in contact with everyone else in
+the population with a given rate.
+- **Mass Action**: The population size is not relevant, only the proportional
+partition in compartments -> works well only for large populations.
+]
+
+???
+
+Examples for each model and other variations
+
+---
+
+name: comp-models
+
+.column[
+
+### Susceptible-Infectious models
+Mathematically are solved through **ordinary differential equations**.
+
+There several modeling choices.
+
+According to contact rate:
+- **Frequency-based models**: The number of contacts is independent of the population/area.
+- **Density-based models**: The number of contacts scales with the population/area.
+
+According to the transmission mechanics:
+- **Deterministic**: no random effects, parameters are fixed and equal for everyone
+in a compartment. Given the same starting conditions, the epidemic trajectory is fixed.
+- **Stochastic**: there is random variation at the individual level and/or at parameter level. Infectious event are discrete and random 
+
+]
+
+---
+
+layout: false
+
+class: middle inverse
+
+# General SIR model
+
+---
+
+layout: true
+
+.pull-left[
+![SIR model](img/SIR.png)
+]
+
+.pull-right[
+$$\frac{dS}{dt}=-\lambda S$$
+$$\frac{dI}{dt}=\lambda S-\gamma I$$
+$$\frac{dR}{dt}=\gamma I$$
+]
+
+---
+
+The SIR models is a system of differential equations that describe the **change in time** $(dt)$ of the population in the compartments $S,I,R$ according to **rates** $\lambda, \gamma$. The sum $S+I+R$ equates to the whole population $N$. Sometimes is possible to work with **fractions of the population**, in that case $S+I+R=1$.
+
+--
+
+- The number of **individuals getting infected** in time, i.e., move from state $S$ to state $I$, depends on the rate $\lambda$ (**force of infection**) at which a susceptible individual get infected by entering in *efficacious contact* with **infectious individuals**, and on the total of **susceptible individuals** $S$. $\lambda S$ represents also the disease **incidence rate**.
+
+--
+- The number of infected **individuals that recover**, i.e., move from state $I$ to state $R$, depends on the number of **infected individuals** $I$ and their **recovery rate** $\gamma$.
+
+--
+
+.blockquote[The model parameters, considered **fixed and equal on average** for the whole population (homogeneous-mixing), define the dynamic of the epidemic. In simple models, an **infected** individual is also **infectious**.]
+
+---
+
+.center[![SIR model](img/SIR_model.png)]
+
+---
+
+layout: false
+
+### Differential equations
+
+.pull-left[![Diff eq](img/calculus_33.jpg)]
+
+.pull-right[
+A **function** $y=f(x, ...)$ describes the value of $y$ (dependent variable, output) for various values of on or many $x$ (indepentent variables, predictors, arguments, inputs). E.g. the position $y$ of a car after a certain time $x$.
+
+The **derivative** $\frac{dy}{dx}$ describe how $y$ is changing when $x$ has a certain value. E.g. the velocity of the car at time $x$.
+
+This change may not be fixed, but a function of the input and/or output $\frac{dy}{dx} = g(x,y,...)$ themselves. This is a **differential equation**. E.g. velocity changes on mountain roads, slopes, traffic jams, etc...
+
+A group of interconnected equation is called a **system of differential equations**, like the SIR model.
+]
+
+---
+
+### Differential equations
+
+.pull-left[
+Differential equations are used to describe **dynamical systems**, that is systems
+that evolve in **time**.
+
+**Solving** a dynamical systems means find the **state of the system at a given time**.
+These systems can be solved in two ways:
+
+- **Analytical solution**: also called close-form, there is a set of mathematical
+operations that given a time $t$, allows you to get the status of the system $\mathcal{S}_t$ at that time.
+This is possible only for very simple systems. E.g., a diff. eq. like $\frac{dx}{dt} = 3$ means that $x(t)= x_0 + 3t$.
+
+- **Numerical solution**: the only way to know $\mathcal{S}_t$ is to simulate the system time step by time step $\mathcal{S}_t = f(\mathcal{S}_{t-1})$. Usually the only way to solve complex non-linear systems.
+]
+
+.pull-right.fig[![Dyn Syst](img/dyn_syst.jpeg)]
+
+---
+
+### What is actually $\lambda$?
+
+The **force of infection** $\lambda$ represents the **rate of infection** for a susceptible individual. It has two alternative formulations:
+
+--
+
+- **Frequency-based model**: $\lambda=\beta\frac{I}{N}=\pi \kappa \frac{I}{N}$: Given by the rate (number per unit time) of contacts $\kappa$  and the fraction of them who are infectious ( $\frac{I}{N}$ ), multiplied by the probability $\pi$ of transmitting the pathogen during such contacts. $\kappa$ and $\pi$ are joined in the **transmission term** $\beta$ which represent the rate of at-risk contacts (independently from the disease status of contacts).
+
+--
+- **Density-based model**: $\lambda'=\beta'I=\pi \nu \frac{N}{A} \frac{I}{N}=\pi\frac{\nu}{A}I$: The number of contacts $k'=\nu \frac{N}{A}$ is proportional to the density of the population in a certain area $\frac{N}{A}$ scaled by a factor $\nu$. Often found in a simplified form after removing both $N$ terms and joining $\pi\frac{\nu}{A}$ in the transmission term $\beta$.
+
+--
+
+.fig75[
+```{r contact rate, echo = FALSE, fig.width=10, fig.height=2.5}
+
+slope <- .5
+ggplot() +
+  geom_hline(size = 1, aes(yintercept = 20, color = "Freq-based")) +
+  geom_abline(size = 1, aes(intercept = 0, slope = slope, color = "Dens-based")) +
+  coord_fixed(ratio = .5, xlim = c(0, 100), ylim = c(0, 50)) +
+  scale_y_continuous(breaks = c(0, 20, 75), labels = c("", "k", "")) +
+  annotate("text", x = 75, y = slope * 75 + slope * 10, label = "k = v * A/N", angle = atan(slope * .5) * 180 / pi, size = 5) +
+  annotate("text", x = 75, y = slope * 75 + slope * 10, label = "k = v * A/N", angle = atan(slope * .5) * 180 / pi, size = 5) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank()) +
+  labs(x = "Population density A/N", y = "Contact rate k", color = "Model type")
+```
+]
+---
+
+### Frequency vs Density based models
+
+--
+.pull-left[
+**Frequency-based**
+- The number of contacts is **fixed**, i.e., independent of denominator population and area.
+- Useful disease in which the **observation area do not impact the number of possible contacts**, e.g., everyone meets on average the same number of people daily, whether in a medium city or in London, or for phisical contact diseases like STDs.
+]
+
+--
+.pull-right[
+**Density-based**
+- The number of contacts **depends on population density** in the study area.
+- Useful when comparing situations in which **population density drives the likelihood of contact**, like air-borne diseases in closed spaces or animal contacts on large areas.
+]
+
+--
+.blockquote[
+This difference is relevant when **applying parameters generated in another setting** (e.g., taken from literature); less relevant if new parameters are fitted from current data since they will incorporate the different assumptions.
+]
+
+We will consider only **frequency-based models** in the rest of the presentation.
+
+---
+
+### What is actually $\gamma$?
+
+.blockquote[
+It represent the **recovery rate** of infected individuals.
+]
+
+It derives from the average length of the infectious period which is $\frac{1}{\gamma}$. This latter value can be collected by clinical data or serology studies.
+
+$\gamma$ increases if patients are treated with a pharmacological/clinical solution that either remove the pathogen or makes it non infectious.
+
+---
+
+### Where do $\beta$ and $\lambda$ come from?
+
+<!-- A way to define it is the product of the (average) **number of contacts** $\kappa$ by the **probability of a efficacious contact** $\pi$ i.e. $\beta = \pi \kappa$ (freq-based model). Actually this is a simplification of $\beta = -\kappa \text{log}(1 - \pi)$ given that $\text{log}(1 - \pi) ≈ -\pi$ se $\pi$ is close to zero. But where does this come from? 
+
+-- -->
+
+Consider $p$ as the probability of **YOU getting infected** by an infectious individual and rethink $\pi$ as the probability that **SOMEONE infects you**. $p$ and $\pi$ are equivalent when considering just a one-by-one contact. 
+
+--
+
+But what about the probability of getting infected by many individuals? First, consider that the probability of NOT getting infected is $1 - p = (1-\pi)$. Then, if there are $k$ at risk contacts this probability becomes (with some assumptions):
+
+$$1-p=\prod_{i=1}^k(1-\pi_i) ≈ (1-\pi)^k$$
+
+(the probability of a group "independent" events it's the product of the individual event probabilities).
+
+---
+
+### Where do $\beta$ and $\lambda$ come from?
+
+If not all contact are infectious and the exposure last for a certain time $t$, we can write the former as:
+
+$$1-p = (1-\pi)^{k\frac{I}{N}t}$$
+with $\frac{I}{N}$ being the fraction of infectious individuals in the population.
+
+--
+
+Rearranging we get the **individual risk of infection**, given $k\frac{I}{N}$ infectious contacts and exposure time $t$:
+
+$$p = 1 - (1-\pi)^{k\frac{I}{N}t}$$
+---
+
+### Where do $\beta$ and $\lambda$ come from?
+
+.pull-left[
+What does $p = 1 - (1-\pi)^{k\frac{I}{N}t}$ tell us? The probability of getting infected every given time is related to:
+- the number of infectious contacts $k\frac{I}{N}$;
+- the lenght of exposure with an infectious person $t$;
+- the probability of infection given contact $\pi$.
+]
+
+.pull-right[
+**Individual infection risk given num**
+
+```{r risk plot, echo = FALSE}
+risk_plot <- lapply(c(1, 2, 5, 10, 100), function(k) {
+  tibble(p = seq(0, 1, length.out = 100), k, q = 1 - (1 - p)^k)
+}) %>%
+  bind_rows() %>%
+  ggplot(aes(p, q, color = reorder(paste("kI/N =", k), k))) +
+  geom_line() +
+  theme_minimal() +
+  labs(x = expression(pi), y = "infection risk", color = "infectious contacts")
+
+print(risk_plot)
+```
+
+]
+
+---
+
+### Where do $\beta$ and $\lambda$ come from?
+
+.pull-left[
+What does $p = 1 - (1-\pi)^{k\frac{I}{N}t}$ tell us? The probability of getting infected every given time is related to:
+- the number of infectious contacts $k\frac{I}{N}$;
+- the lenght of exposure with an infectious person $t$;
+- the probability of infection given contact $\pi$.
+
+.blockquote[Epidemics can be controlled either by **reducing the number of contacts** (e.g. social distancing, closures, lockdowns) or by **decreasing the risk of contagion** given a contact (masks, hand hygiene, physical distancing, short exposure time).]
+]
+
+.pull-right[
+**Individual infection risk given num**
+
+```{r risk plot 2, echo = FALSE}
+print(risk_plot)
+```
+
+]
+
+---
+
+### Where do $\beta$ and $\lambda$ come from?
+
+If $\pi$ is small (< 10%), $\beta = \kappa\pi$ can be rewritten as $\beta = -\kappa \text{log}(1-\pi)$, which allow to rewrite the individual risk formula $p = 1 - (1-\pi)^{k\frac{I}{N}t}$ as:
+
+$$p = 1 - e^{-\beta \frac{I}{N}t}$$
+--
+
+taking the derivative in time (ie. the change of risk in time) the **risk become a rate** and we get the **force of infection** $\lambda$:
+
+$$\frac{dp}{dt}=\beta \frac{I}{N}= \lambda$$
+--
+
+.blockquote[The **force of infection** represents the individual **transmission rate** per individual per time unit.]
+
+When multiplied by the number of still susceptible individuals, we get $\lambda S$ which is the number of of cases in the epidemic per unit of time, i.e. the **incidence rate**.
+
+
+

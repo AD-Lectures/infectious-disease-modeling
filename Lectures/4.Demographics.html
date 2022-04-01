@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Introduction to Infectious Disease Modeling - Demographics</title>
+    <meta charset="utf-8" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/ninjutsu.css" rel="stylesheet" />
+    <script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+    <script src="libs/viz-1.8.2/viz.js"></script>
+    <link href="libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
+    <script src="libs/grViz-binding-1.0.9/grViz.js"></script>
+    <script src="https://cdn.rawgit.com/timelyportfolio/svg_mathjax2/master/svg_mathjax2.js"></script>
+    <link rel="stylesheet" href="style.css" type="text/css" />
+    <link rel="stylesheet" href="cols.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+class: middle inverse
+
+# Model with demographics
+
+---
+
+## Death and birth rates
+
+The SIR model can be extended to include the population birth and death rates `\(\nu, \mu\)`.
+This is a so called an **open population model**.
+
+.pull-left[
+
+<div id="htmlwidget-d878e87f9e46b13bc796" style="width:500px;height:250px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-d878e87f9e46b13bc796">{"x":{"diagram":"\n    digraph SIR {\n\n    graph [overlap = true, fontsize = 10, margin=0]\n\n    node [style = invis]\n    N, MS, MI, MR\n\n    node [shape = box, fontname = Helvetica, style = filled]\n    S [fillcolor = \"#7EC1B3\"]\n    I [fillcolor = \"#E8806F\"]\n    R [fillcolor = \"#C373B6\"]\n\n    rankdir=\"LR\";\n    { rank = same; S I R }\n\n    S -> I [label = \"$\\\\beta$\"]\n    N -> S [label = \"$\\\\nu$\"]\n    S -> MS [label = \"$\\\\mu$\"]\n    I -> MI [label = \"$\\\\mu$\"]\n    R -> MR [label = \"$\\\\mu$\"]\n    I -> R [label = \"$\\\\gamma$\"]\n    }\n    ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_SVG"></script>
+<script>
+HTMLWidgets.addPostRenderHandler(function() {
+setTimeout(function(){new Svg_MathJax().install()}, 4000);
+});
+</script>
+]
+.pull-right[
+
+`$$\frac{dS}{dt}=\nu N -\beta\frac{I}{N}S -\mu S$$`
+`$$\frac{dI}{dt}=\beta\frac{I}{N}S-\gamma I - \mu I$$`
+`$$\frac{dR}{dt}=\gamma I - \mu R$$`
+]
+
+--
+
+In this formulation the `\(S\)` compartment **receives new individuals** with absolute rate `\(\nu\)` while all compartments **lose individuals** with a relative rate `\(\mu\)`.
+
+The basic reproduction number becomes:
+`$$\mathcal{R}_0 = \frac{\beta}{\gamma + \mu}$$`
+---
+
+## Endemicity
+
+
+In presence of birth and deaths, if the population is stable (i.e. `\(\nu = \mu\)`)
+the epidemic either dies off `\((\mathcal{R}_0 &lt; 1)\)` or it reaches an equilibrium (**endemic state**) `\((\mathcal{R}_0 &gt; 1)\)`, characterized by:
+
+`$$(S^*, I^*, R^*) = N\Big(\frac{1}{\mathcal{R}_0},\frac{\mu}{\beta}(\mathcal{R}_0 - 1), 1 - \frac{1}{\mathcal{R}_0} - \frac{\mu}{\beta}(\mathcal{R}_0 - 1)\Big)$$`
+--
+
+
+
+
+For a population with `\(\mu = \nu = \frac{1}{80}\)`, `\(\beta = 1.875\)`, `\(\gamma = \frac{1}{8}\)` which imply a  `\(\mathcal{R}_0 \approx 14\)`, in the **range of measles**, we get an equilibrium state of **S = 7.33%**, **I = 8.42%**, **R = 84.2%** as fractions of the population. This scenario means that the **great majority of the population will have antibodies** against measles.
+
+--
+
+A less invasive disease like **flu** `\((\mathcal{R}_0 \approx 1.3)\)` with parameters: `\(\beta = 0.325\)`, `\(\gamma = \frac{1}{4}\)` produces a quite different endemic regime: **S = 80.8%**, **I = 0.916%**, **R = 18.3%**. Only a **small portion of the population is immunized** and it's **quickly replaced** by new naive newborns while immunized individuals die out.
+
+---
+
+## Age of infection
+
+.pull-left[
+
+When demographics are considered and disease-related mortality is ignored, at the equilibrium `\(\mathcal{R}_0\)` can be used to estimate the **mean age of infection**:
+
+`$$A \approx \frac{1}{\mu(\mathcal{R}_0 - 1)}$$`
+Consequently, the age of first infection and the life expectancy `\(L = \frac{1}{\mu}\)`
+allow to estimate `\(\mathcal{R}_0\)` at equilibrium:
+
+`$$\mathcal{R}_0 = 1 + \frac{L}{A}$$`
+
+]
+
+.pull-right[
+![Age first encounter](img/Mean_age.png)
+]
+
+
+
+
+In the case of measles, using the parameter of the previous slide we get an average age of infection of `\(A = 6.3\)`. This model works less well for weakly invasive diseases like flu, producing absurd values `\((A = 336)\)`, indicating that many people may never encounter the disease in their life.
+
+---
+
+## Endemic oscillations
+
+The epidemic reaches the equilibrium through **oscillations**, whose period is:
+
+`$$T=2\pi\sqrt{AD}$$`
+with `\(A\)` being the mean age of infection and `\(D=\frac{1}{\gamma + \mu}\)` the average length of the infection period.
+
+--
+
+name: demog_3
+
+.pull-left[
+Regime for `\(\frac{1}{\mu} = 70\)` years, `\(\beta = 520\)` per year, and `\(\frac{1}{\gamma} = 7\)` days, giving `\(\mathcal{R}_0 = 10\)`. Initial conditions were `\(S_{(0)} = 0.1\)` and `\(I_{(0)} = 2.5 \times 10^{-4}\)`.
+]
+
+.pull-right[
+.center[![Oscillatory regime](img/oscillation.png)]
+]
+
+---
+
+## Competing hazards
+
+If `\(\mu\)` was mortality due only to the disease (so applied just to the `\(I\)` compartment), infectious individuals can either survive or die. The **survival rate** is modeled as:
+
+`$$\frac{\gamma}{\gamma + \mu}$$`
+Conversely the complementary of the survival rate is the **case-fatality rate**:
+
+`$$\frac{\mu}{\gamma + \mu}$$`
+
+&lt;!-- ---
+
+name: demog_sum
+
+## Summary
+
+.blockquote[
+The basic reproductive number is **lower when considering demographics** due to the **natural death of infected individuals**.
+]
+&lt;br&gt;
+.blockquote[
+In presence of demographics the epidemic **reaches an equilibrium** through an **oscillatory dynamic** of the infection prevalence.
+]
+&lt;br&gt;
+.blockquote[
+The age of first encounter with the disease **decreases with `\(\mathcal{R}_0\)`** while the number of seropositives **increases**.
+]
+&lt;br&gt;
+.blockquote[
+`\(\mathcal{R}_0\)` can be estimated through the **age of first encounter and the life expectancy** once the epidemic equilibrium is reached
+] --&gt;
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
