@@ -12,7 +12,7 @@ The lecture list and structure is not definitive and new lectures will be added 
 Theory lectures: <!--!!Don't remove the main url from links!-->
 
 - Introduction [[slides](https://ad-lectures.github.io/infectious-disease-modeling/Lectures/1.Introduction.html)] [[video](https://www.dropbox.com/s/ys4psd0u9mn97qy/1.%20Introduction.mp4?dl=0)]
-- Compartmental models [[slides](https://ad-lectures.github.io/infectious-disease-modeling/Lectures/2.Compartimental_models.html)] [[video](https://www.dropbox.com/s/tru404tehgzqxqi/2.%20Compartimental%20Models.mp4?dl=0)]
+- Compartmental models [[slides](https://ad-lectures.github.io/infectious-disease-modeling/Lectures/2.Compartmental_models.html)] [[video](https://www.dropbox.com/s/tru404tehgzqxqi/2.%20Compartmental%20Models.mp4?dl=0)]
 - Reproductive numbers [[slides](https://ad-lectures.github.io/infectious-disease-modeling/Lectures/3.Reproductive_numbers.html)] [[video](https://www.dropbox.com/s/vuksw2rmh3mecgw/3.%20Reproductive%20numbers.mp4?dl=0)]
 - Demographics [[slides](https://ad-lectures.github.io/infectious-disease-modeling/Lectures/4.Demographics.html)] [[video](https://www.dropbox.com/s/xl44lb6fyrbueuy/4.%20Demographics.mp4?dl=0)]. NB: there's an error in the video, the natality rate should be $\nu N$ not just $\nu$.
 - Host heterogeneity [[slides](https://ad-lectures.github.io/infectious-disease-modeling/Lectures/5.Host_heterogeneity.html)] [[video](https://www.dropbox.com/s/c6jizkz0fffmpvp/5.%20Host%20heterogeneity.mp4?dl=0)]
