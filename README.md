@@ -2,10 +2,10 @@
 
 Introductory course on the **mathematical modelling of infectious diseases**.
 
-The lectures will introduce you to the basic concept, show how a compartmental model is built, which insights can be derived from it and how these insight can inform public health decisions.
+The lectures will introduce you to the basic concepts and show how a compartmental model is built, which insights can be derived from it and how these insights can inform public health decisions.
 Also, some extensions to the basic SIR compartmental model are shown, introducing for example the effect of demographics and host heterogeneity.
 
-Finally, there are also lectures on the practical implementation of modeling in the [R programming language](https://www.r-project.org/).
+Finally, there are also lectures on the practical implementation of infectious disease modelling in the [R programming language](https://www.r-project.org/).
 
 The lecture list and structure is not definitive and new lectures will be added in the future. Check the [releases](https://github.com/AD-Lectures/infectious-disease-modeling/releases) to see the changes.
 
